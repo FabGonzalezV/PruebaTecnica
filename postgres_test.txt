@@ -1,0 +1,99 @@
+Crear un archivo sql para el SGDB PostgreSQL con las siguientes especificaciones.
+
+Crear 3 tablas: producto, proveedor y categoría.
+
+producto
+	Atributos y tipos de dato:
+		+id INT
+		nombre VARCHAR
+		cantidad INT
+		fecha_actualizacion DATE
+		-idProveedor INT
+		-idCategoria INT
+
+categoría
+	Atributos y tipos de dato:
+		+id INT
+		nombre VARCHAR
+
+proveedor:
+	Atributos y tipos de dato:
+		+id INT
+		nombre VARCHAR
+
+Datos de la tabla producto:
+		(lapiz,10,2022-05-03,Papelera SA de CV,oficina)
+		(goma,15,2022-05-05,Papelera SA de CV,oficina)	
+		(sacapuntas,12,2022-05-05,Papelera SA de CV,oficina)
+		(resistol,5,2022-09-20,Papelera SA de CV,oficina)
+		(agua,7,2022-07-07,Tiendita de la esquina,viaticos)
+		(papitas,16,2022-10-01,Tiendita de la esquina,viaticos)
+		(cable,1,2022-06-14,Compania de Electronica,electronica)
+
+Querys:
+		*Listar el nombre de los productos donde el nombre de categoria sea viaticos y la fecha de actualización del producto sea antes de septiembre.
+		*Listar el nombre del producto y el nombre de categoría correspondiente al producto, que tengan más de 4 en cantidad, ordenados por cantidad.
+		*Listar el nombre del proveedor donde la cantidad de productos sea mayor a 11, sin registros repetidos.
+
+#####  Tablas #####
+
+ /*DROP TABLE IF EXISTS categoria, proveedor, producto;*/
+
+  create table categoria(
+   id INT PRIMARY KEY,
+   nombre VARCHAR(50)
+ );
+ create table proveedor(
+   id INT PRIMARY KEY,
+   nombre VARCHAR(50)
+ );
+ 
+ create table producto(
+   id INT PRIMARY KEY,
+   nombre VARCHAR(50),
+   cantidad INT,
+   fecha_actualizacion DATE,
+   idProveedor INT,
+   idCategoria INT ,
+   FOREIGN KEY(idProveedor) REFERENCES proveedor(id),
+   FOREIGN KEY(idCategoria) REFERENCES categoria(id) 
+ );
+
+  INSERT INTO proveedor(id, nombre)VALUES(
+ 1,'Papelera SA de CV'),
+   (2,'Tiendita de la esquina'),
+   (3,'Compania de Electronica');
+  
+    INSERT INTO categoria(id, nombre)VALUES
+   (1,'oficina'),
+     (2,'viaticos'),
+     (3,'electronica');
+   
+       
+        
+  INSERT INTO producto (id, nombre, cantidad,  fecha_actualizacion, idProveedor, idCategoria) VALUES 
+ 		(1, 'lapiz',10,'2022-05-03', 1,1),
+		(2,'goma',15,'2022-05-05',1, 1),	
+		(3,'sacapuntas',12,'2022-05-05',1,1),
+		(4,'resistol',5,'2022-09-20',1,1),
+		(5,'agua',7,'2022-07-07' ,2,2),
+		(6,'papitas',16,'2022-10-01',2,2),
+		(7,'cable',1,'2022-06-14',3,3);  
+
+/*query 1*/
+ SELECT nombre FROM producto where idCategoria = 2 AND extract(MONTH FROM fecha_actualizacion) < 9;
+ 
+ 
+/*query 2*/
+create view view_product 
+as select nombre, cantidad, idCategoria from producto  where cantidad > 4  ;
+select * from view_product;
+create view view_cat 
+as select categoria.nombre as nombre_Categoria,  id from categoria  ;
+select view_product.nombre, view_product.cantidad, view_cat.nombre_Categoria from view_product inner join view_cat  on view_product.idcategoria = view_cat.id order by view_product.cantidad asc;
+
+ /*query 3*/
+ SELECT distinct(proveedor.nombre) from proveedor inner join producto on proveedor.id = producto.idProveedor where cantidad > 11;
+
+
+  
