@@ -1,5 +1,5 @@
 # PruebaTecnica
-Prueba Técnica para Lytics
+Prueba Técnica  
 **Códigos en sus respectivas ramas**
 - SQL
 - Python
